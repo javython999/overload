@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+  <th:block th:replace="~{fragments/config :: config}"></th:block>
+  <title layout:title-pattern="$CONTENT_TITLE : $LAYOUT_TITLE">Overload</title>
+  <th:block layout:fragment="script"></th:block>
+</head>
+<body>
+<div id="root">
+  <div class="min-h-screen bg-[#F8F9FB]">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <main layout:fragment="content" class="max-w-[1400px] mx-auto px-6 py-12 mt-20">
+    </main>
+
+  </div>
+</div>
+</body>
+</html>

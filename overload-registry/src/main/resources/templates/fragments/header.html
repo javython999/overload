@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:fragment="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white">
+    <div class="border-b border-gray-100">
+        <div class="max-w-[1400px] mx-auto px-6">
+            <div class="flex items-center justify-between h-20">
+                <a class="flex items-center gap-3 cursor-pointer" th:href="@{/}" data-discover="true">
+                    <img alt="Logo" class="h-10 w-auto object-contain" th:src="@{/images/logo.png}">
+                    <span class="px-2 py-1 bg-[#EDE9FE] text-[#6B46C1] text-xs font-semibold rounded-full">BETA</span>
+                </a>
+                <nav class="flex items-center gap-8">
+                    <a class="text-[#1A1D2E] font-medium hover:text-[#6B46C1] transition-colors cursor-pointer" th:href="@{/}">Load Test</a>
+                    <a class="text-gray-600 font-medium hover:text-[#6B46C1] transition-colors cursor-pointer" th:href="@{/worker-monitor}">Worker Monitor</a>
+                </nav>
+                <div class="flex items-center gap-4"></div>
+            </div>
+        </div>
+    </div>
+</header>
+</html>

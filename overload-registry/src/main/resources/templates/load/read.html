@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/view_layout}">
+<head>
+    <title>Load Test Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+          integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+</head>
+<body>
+<th:block layout:fragment="content">
+    <div class="max-w-[1400px] mx-auto px-6 py-12">
+        <div class="flex gap-8">
+            <div class="flex-1">
+                <div class="bg-white rounded-xl p-8 mb-6 border border-gray-100 shadow-sm">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span id="load-status" class="px-3 py-1 rounded-full text-xs font-semibold">
+                            </span>
+                    </div>
+                    <h1 id="load-name" class="text-4xl font-bold text-[#1A1D2E] mb-6 leading-tight"></h1>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all cursor-pointer whitespace-nowrap active-tab"
+                                    onclick="requestRetry()"
+                                    data-section="script">
+                                <div class="tab-icon w-7 h-7 flex items-center justify-center rounded-lg active-tab-icon">
+                                    <i class="fa-solid fa-arrow-rotate-right"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs font-semibold">재실행</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="mb-12 bg-white rounded-2xl overflow-hidden border border-gray-100">
+                    <div class="flex border-b border-gray-100">
+                        <button class="flex items-center gap-2 px-8 py-5 text-sm font-semibold transition-all whitespace-nowrap cursor-pointer relative text-[#6B46C1]">
+                            <div class="w-5 h-5 flex items-center justify-center">
+                                <i class="fa-solid fa-circle-info"></i>
+                            </div>
+                            Details
+                            <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-[#6B46C1]"></span>
+                        </button>
+                    </div>
+                    <div class="flex">
+                        <div class="w-56 flex-shrink-0 border-r border-gray-100 p-4 space-y-1">
+                            <button class="tab-button result hidden w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all cursor-pointer whitespace-nowrap text-gray-600 hover:bg-gray-50"
+                                    data-section="result"
+                                    onclick="activeTab(this)">
+                                <div class="tab-icon w-7 h-7 flex items-center justify-center rounded-lg bg-gray-100">
+                                    <i class="ri-shopping-bag-line text-sm text-gray-500"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs font-semibold">테스트 결과</div>
+                                </div>
+                            </button>
+                            <button class="tab-button w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all cursor-pointer whitespace-nowrap active-tab"
+                                    data-section="script"
+                                    onclick="activeTab(this)">
+                                <div class="tab-icon w-7 h-7 flex items-center justify-center rounded-lg active-tab-icon">
+                                    <i class="ri-bank-line text-sm text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs font-semibold">스크립트</div>
+                                </div>
+                            </button>
+                            <button class="tab-button w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all cursor-pointer whitespace-nowrap text-gray-600 hover:bg-gray-50"
+                                    data-section="files"
+                                    onclick="activeTab(this)">
+                                <div class="tab-icon w-7 h-7 flex items-center justify-center rounded-lg bg-gray-100">
+                                    <i class="ri-apps-line text-sm text-gray-500"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs font-semibold">첨부파일</div>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="flex-1 p-8">
+                            <div class="section-content result hidden">
+                                <section class="mb-12">
+                                    <div class="flex items-center gap-4 mb-6">
+                                        <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-emerald-100">
+                                            <i class="fas fa-chart-line text-2xl text-emerald-700"></i>
+                                        </div>
+                                        <h2 class="text-2xl font-bold text-[#1A1D2E]">Trends & Times</h2>
+                                    </div>
+                                    <div class="bg-white rounded-xl overflow-hidden">
+                                        <div class="grid grid-cols-[1fr_90px_90px_90px_90px_90px_90px] items-center px-5 py-3 bg-[#F8F9FB] border-b border-gray-100 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                            <span></span>
+                                            <span class="text-center">AVG</span>
+                                            <span class="text-center">MIN</span>
+                                            <span class="text-center">MED</span>
+                                            <span class="text-center">MAX</span>
+                                            <span class="text-center">P(90)</span>
+                                            <span class="text-center">P(95)</span>
+                                        </div>
+                                        <div class="divide-y divide-gray-50">
+                                            <div id="trend-http_req_blocked"
+                                                 class="grid grid-cols-[1fr_90px_90px_90px_90px_90px_90px] items-center px-5 py-4 hover:bg-[#FAF9FF] transition-colors duration-150 cursor-pointer group bg-white">
+                                                <div class="flex items-center gap-3 min-w-0 pr-4">
+                                                    <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-[#EDE9FE] text-[#6B46C1] flex-shrink-0">
+                                                        <i class="fa-solid fa-alarm-clock text-sm"></i>
+                                                    </div>
+                                                    <div class="min-w-0">
+                                                        <p class="text-sm font-medium text-gray-800 truncate">
+                                                            http_req_blocked</p>
+                                                        <p class="text-xs text-gray-400 truncate">요청을 보내기 전에 대기한
+                                                            시간</p>
+                                                    </div>
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.00
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.00
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">17.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">1.11
+                                                </div>
+                                            </div>
+                                            <div id="trend-http_req_connecting"
+                                                 class="grid grid-cols-[1fr_90px_90px_90px_90px_90px_90px] items-center px-5 py-4 hover:bg-[#FAF9FF] transition-colors duration-150 cursor-pointer group bg-[#FAFAFA]">
+                                                <div class="flex items-center gap-3 min-w-0 pr-4">
+                                                    <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-[#EDE9FE] text-[#6B46C1] flex-shrink-0">
+                                                        <i class="fa-solid fa-diagram-project text-sm"></i>
+                                                    </div>
+                                                    <div class="min-w-0">
+                                                        <p class="text-sm font-medium text-gray-800 truncate">
+                                                            http_req_connecting</p>
+                                                        <p class="text-xs text-gray-400 truncate">서버와 TCP 연결을 맺는
+                                                            시간</p>
+                                                    </div>
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.00
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.00
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">17.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">1.11
+                                                </div>
+                                            </div>
+                                            <div id="trend-http_req_duration"
+                                                 class="grid grid-cols-[1fr_90px_90px_90px_90px_90px_90px] items-center px-5 py-4 hover:bg-[#FAF9FF] transition-colors duration-150 cursor-pointer group bg-white">
+                                                <div class="flex items-center gap-3 min-w-0 pr-4">
+                                                    <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-[#EDE9FE] text-[#6B46C1] flex-shrink-0">
+                                                        <i class="fa-solid fa-repeat text-sm"></i>
+                                                    </div>
+                                                    <div class="min-w-0">
+                                                        <p class="text-sm font-medium text-gray-800 truncate">
+                                                            http_req_duration</p>
+                                                        <p class="text-xs text-gray-400 truncate">전체 요청 시간</p>
+                                                    </div>
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.00
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.00
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">17.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">1.11
+                                                </div>
+                                            </div>
+                                            <div id="trend-http_req_receiving"
+                                                 class="grid grid-cols-[1fr_90px_90px_90px_90px_90px_90px] items-center px-5 py-4 hover:bg-[#FAF9FF] transition-colors duration-150 cursor-pointer group bg-[#FAFAFA]">
+                                                <div class="flex items-center gap-3 min-w-0 pr-4">
+                                                    <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-[#EDE9FE] text-[#6B46C1] flex-shrink-0">
+                                                        <i class="fa-solid fa-reply text-sm"></i>
+                                                    </div>
+                                                    <div class="min-w-0">
+                                                        <p class="text-sm font-medium text-gray-800 truncate">
+                                                            http_req_receiving</p>
+                                                        <p class="text-xs text-gray-400 truncate">서버 응답을 받아오는 시간</p>
+                                                    </div>
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.00
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.00
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">17.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">1.11
+                                                </div>
+                                            </div>
+                                            <div id="trend-http_req_sending"
+                                                 class="grid grid-cols-[1fr_90px_90px_90px_90px_90px_90px] items-center px-5 py-4 hover:bg-[#FAF9FF] transition-colors duration-150 cursor-pointer group bg-white">
+                                                <div class="flex items-center gap-3 min-w-0 pr-4">
+                                                    <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-[#EDE9FE] text-[#6B46C1] flex-shrink-0">
+                                                        <i class="fa-solid fa-share text-sm"></i>
+                                                    </div>
+                                                    <div class="min-w-0">
+                                                        <p class="text-sm font-medium text-gray-800 truncate">
+                                                            http_req_sending</p>
+                                                        <p class="text-xs text-gray-400 truncate">요청 데이터를 서버로 보내는
+                                                            시간</p>
+                                                    </div>
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.00
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.00
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">17.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">1.11
+                                                </div>
+                                            </div>
+                                            <div id="trend-http_req_tls_handshaking"
+                                                 class="grid grid-cols-[1fr_90px_90px_90px_90px_90px_90px] items-center px-5 py-4 hover:bg-[#FAF9FF] transition-colors duration-150 cursor-pointer group group bg-[#FAFAFA]">
+                                                <div class="flex items-center gap-3 min-w-0 pr-4">
+                                                    <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-[#EDE9FE] text-[#6B46C1] flex-shrink-0">
+                                                        <i class="fa-solid fa-handshake text-sm"></i>
+                                                    </div>
+                                                    <div class="min-w-0">
+                                                        <p class="text-sm font-medium text-gray-800 truncate">
+                                                            http_req_tls_handshaking</p>
+                                                        <p class="text-xs text-gray-400 truncate">HTTPS TLS 핸드셰이크
+                                                            시간</p>
+                                                    </div>
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.00
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.00
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">17.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">1.11
+                                                </div>
+                                            </div>
+                                            <div id="trend-http_req_waiting"
+                                                 class="grid grid-cols-[1fr_90px_90px_90px_90px_90px_90px] items-center px-5 py-4 hover:bg-[#FAF9FF] transition-colors duration-150 cursor-pointer group bg-white">
+                                                <div class="flex items-center gap-3 min-w-0 pr-4">
+                                                    <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-[#EDE9FE] text-[#6B46C1] flex-shrink-0">
+                                                        <i class="fa-solid fa-hourglass-half text-sm"></i>
+                                                    </div>
+                                                    <div class="min-w-0">
+                                                        <p class="text-sm font-medium text-gray-800 truncate">
+                                                            http_req_waiting</p>
+                                                        <p class="text-xs text-gray-400 truncate">서버가 응답을 시작할 때까지
+                                                            기다리는 시간</p>
+                                                    </div>
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.00
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.00
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">17.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">0.88
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">1.11
+                                                </div>
+                                            </div>
+                                            <div id="trend-iteration_duration"
+                                                 class="grid grid-cols-[1fr_90px_90px_90px_90px_90px_90px] items-center px-5 py-4 hover:bg-[#FAF9FF] transition-colors duration-150 cursor-pointer group bg-[#FAFAFA]">
+                                                <div class="flex items-center gap-3 min-w-0 pr-4">
+                                                    <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-[#EDE9FE] text-[#6B46C1] flex-shrink-0">
+                                                        <i class="fa-solid fa-arrow-rotate-right text-sm"></i>
+                                                    </div>
+                                                    <div class="min-w-0">
+                                                        <p class="text-sm font-medium text-gray-800 truncate">
+                                                            iteration_duration</p>
+                                                        <p class="text-xs text-gray-400 truncate">한 VU(가상 사용자)가 한 번의
+                                                            시나리오를 완료하는 시간</p>
+                                                    </div>
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">2997.45
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">1001.26
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">2993.55
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">2993.55
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">4596.17
+                                                </div>
+                                                <div class="text-center text-xs text-gray-400 font-medium">4795.10
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                                <section class="mb-12">
+                                    <div class="flex items-center gap-4 mb-6">
+                                        <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-emerald-100">
+                                            <i class="fa-solid fa-percent text-2xl text-emerald-700"></i>
+                                        </div>
+                                        <h2 class="text-2xl font-bold text-[#1A1D2E]">Rates</h2>
+                                    </div>
+                                    <div class="divide-y divide-gray-50">
+                                        <div class="grid grid-cols-[1fr_1fr_1fr_1fr] items-center px-5 py-3 bg-[#F8F9FB] border-b border-gray-100 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                            <span></span>
+                                            <span class="text-center">Rate %</span>
+                                            <span class="text-center">Pass Count</span>
+                                            <span class="text-center">Fail Count</span>
+                                        </div>
+                                        <div id="rates-http_req_success"
+                                             class="grid grid-cols-[1fr_1fr_1fr_1fr] items-center px-5 py-4 hover:bg-[#FAF9FF] transition-colors duration-150 cursor-pointer group bg-white">
+                                            <div class="flex items-center gap-3 min-w-0 pr-4">
+                                                <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-[#EDE9FE] text-[#6B46C1] flex-shrink-0">
+                                                    <i class="fa-solid fa-hourglass-half text-sm"></i>
+                                                </div>
+                                                <div class="min-w-0">
+                                                    <p class="text-sm font-medium text-gray-800 truncate">
+                                                        http_req_success</p>
+                                                    <p class="text-xs text-gray-400 truncate">HTTP 요청이 성공한 비율</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-center text-xs text-gray-400 font-medium">0.00%</div>
+                                            <div class="text-center text-xs text-gray-400 font-medium">0.00</div>
+                                            <div class="text-center text-xs text-gray-400 font-medium">0.00</div>
+                                        </div>
+                                    </div>
+                                </section>
+                                <section class="mb-12">
+                                    <div class="flex items-center gap-4 mb-6">
+                                        <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-emerald-100">
+                                            <i class="fa-solid fa-circle-info text-2xl text-emerald-700"></i>
+                                        </div>
+                                        <h2 class="text-2xl font-bold text-[#1A1D2E]">Test Run Details</h2>
+                                    </div>
+                                    <div class="grid grid-cols-5 gap-4">
+                                        <div class="p-4 bg-[#EDE9FE] rounded-xl">
+                                            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold w-fit mb-4 bg-green-100 text-green-700">Iterations</span>
+
+                                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="flex flex-col">
+                                                        <span class="text-sm font-medium text-gray-900">Total</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex items-center gap-4 text-gray-500 text-sm">
+                                                    <div class="flex items-center gap-1">
+                                                        <i class="ri-eye-line"></i><span
+                                                            id="iterations-total">22003</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="flex flex-col">
+                                                        <span class="text-sm font-medium text-gray-900">Rate</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex items-center gap-4 text-gray-500 text-sm">
+                                                    <div class="flex items-center gap-1">
+                                                        <i class="ri-eye-line"></i><span
+                                                            id="iterations-rate">22003</span><span>/s</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="p-4 bg-[#EDE9FE] rounded-xl">
+                                            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold w-fit mb-4 bg-green-100 text-green-700">Virtual Users</span>
+
+                                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="flex flex-col">
+                                                        <span class="text-sm font-medium text-gray-900">Min</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex items-center gap-4 text-gray-500 text-sm">
+                                                    <div class="flex items-center gap-1">
+                                                        <i class="ri-eye-line"></i><span id="virtual-users-min">22003</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="flex flex-col">
+                                                        <span class="text-sm font-medium text-gray-900">Max</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex items-center gap-4 text-gray-500 text-sm">
+                                                    <div class="flex items-center gap-1">
+                                                        <i class="ri-eye-line"></i><span id="virtual-users-max">22003</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="p-4 bg-[#EDE9FE] rounded-xl">
+                                            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold w-fit mb-4 bg-green-100 text-green-700">Requests</span>
+
+                                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="flex flex-col">
+                                                        <span class="text-sm font-medium text-gray-900">Total</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex items-center gap-4 text-gray-500 text-sm">
+                                                    <div class="flex items-center gap-1">
+                                                        <i class="ri-eye-line"></i><span
+                                                            id="requests-total">22003</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="flex flex-col">
+                                                        <span class="text-sm font-medium text-gray-900">Rates</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex items-center gap-4 text-gray-500 text-sm">
+                                                    <div class="flex items-center gap-1">
+                                                        <i class="ri-eye-line"></i><span
+                                                            id="requests-rates">22003</span><span>/s</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="p-4 bg-[#EDE9FE] rounded-xl">
+                                            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold w-fit mb-4 bg-green-100 text-green-700">Data Received</span>
+
+                                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="flex flex-col">
+                                                        <span class="text-sm font-medium text-gray-900">Total</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex items-center gap-4 text-gray-500 text-sm">
+                                                    <div class="flex items-center gap-1">
+                                                        <i class="ri-eye-line"></i><span id="data-received-total">22003</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="flex flex-col">
+                                                        <span class="text-sm font-medium text-gray-900">Rate</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex items-center gap-4 text-gray-500 text-sm">
+                                                    <div class="flex items-center gap-1">
+                                                        <i class="ri-eye-line"></i><span id="data-received-rate">22003</span><span>KB/s</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="p-4 bg-[#EDE9FE] rounded-xl">
+                                            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold w-fit mb-4 bg-green-100 text-green-700">Data Sent</span>
+
+                                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="flex flex-col">
+                                                        <span class="text-sm font-medium text-gray-900">Total</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex items-center gap-4 text-gray-500 text-sm">
+                                                    <div class="flex items-center gap-1">
+                                                        <i class="ri-eye-line"></i><span
+                                                            id="data-sent-total">22003</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                                <div class="flex items-center gap-3">
+                                                    <div class="flex flex-col">
+                                                        <span class="text-sm font-medium text-gray-900">Rate</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="flex items-center gap-4 text-gray-500 text-sm">
+                                                    <div class="flex items-center gap-1">
+                                                        <i class="ri-eye-line"></i><span
+                                                            id="data-sent-rate">22003</span><span>KB/s</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                            <div class="section-content script">
+                                <div class="flex items-center gap-4 mb-6">
+                                    <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-emerald-100">
+                                        <i class="fa-regular fa-file-code text-2xl text-emerald-700"></i>
+                                    </div>
+                                    <h2 class="text-2xl font-bold text-[#1A1D2E]">Script</h2>
+                                </div>
+                                <div class="bg-[#1E1E1E] rounded-lg p-6 my-6 relative">
+                                    <button class="absolute top-4 right-4 px-3 py-1.5 bg-gray-700 text-white text-xs rounded hover:bg-gray-600 transition-colors cursor-pointer">
+                                        복사
+                                    </button>
+                                    <pre class="text-sm text-gray-300 overflow-x-auto"><code
+                                            id="script-content"></code></pre>
+                                </div>
+                            </div>
+                            <div class="section-content files hidden">
+                                <div class="flex items-center gap-4 mb-6">
+                                    <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-emerald-100">
+                                        <i class="fa-solid fa-file-arrow-down text-2xl text-emerald-700"></i>
+                                    </div>
+                                    <h2 class="text-2xl font-bold text-[#1A1D2E]">첨부파일</h2>
+                                </div>
+                                <div class="grid grid-cols-[1fr_90px] items-center px-5 py-3 bg-[#F8F9FB] border-b border-gray-100 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                                    <span>파일명</span>
+                                    <span class="text-center">다운로드</span>
+                                </div>
+                                <div class="divide-y divide-gray-50 file-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="script">
+    <script th:src="@{/js/load.js}"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script th:inline="javascript">
+        document.addEventListener("DOMContentLoaded", async () => {
+            const load = await fetchLoad([[${loadId}]]);
+            render(load);
+            console.log(load);
+        });
+
+        function render(load) {
+            document.getElementById("load-name").innerText = load.loadName;
+            document.getElementById('load-status').innerText = load.statusText;
+            document.getElementById('load-status').classList.add(...load.statusClassName.split(' '));
+            document.getElementById('script-content').innerText = load.scriptContent;
+            console.log(load);
+            if (load.statusText === '완료') {
+                renderTrends(load.summary.trends);
+                renderRates(load.summary.rates);
+                renderTestsAndDetails(load.summary.overview);
+                renderSection(load.statusText);
+            }
+
+            renderScriptFile(load.script);
+            renderAttacheFiles(load.attacheFiles);
+        }
+
+        function renderSection(statusText) {
+            if (statusText !== '완료') {
+                return;
+            }
+            const resultButton = document.querySelector('.tab-button.result');
+            resultButton.classList.remove('hidden');
+            activeTab(resultButton);
+        }
+
+        function renderTrends(trends) {
+            trends.forEach(trend => {
+                const div = document.getElementById(`trend-${trend.metric}`);
+                div.children[1].textContent = trend.avg.toFixed(2);
+                div.children[2].textContent = trend.min.toFixed(2);
+                div.children[3].textContent = trend.med.toFixed(2);
+                div.children[4].textContent = trend.max.toFixed(2);
+                div.children[5].textContent = trend.p90.toFixed(2);
+                div.children[6].textContent = trend.p95.toFixed(2);
+            })
+        }
+
+        function renderRates(rates) {
+            const div = document.getElementById('rates-http_req_success');
+            div.children[1].textContent = (rates.rate * 100).toFixed(2) + "%";
+            div.children[2].textContent = rates.passes;
+            div.children[3].textContent = rates.fails;
+        }
+
+        function renderTestsAndDetails(overview) {
+            document.getElementById('iterations-total').textContent = overview.iterations.total;
+            document.getElementById('iterations-rate').textContent = overview.iterations.rate.toFixed(2);
+
+            document.getElementById('virtual-users-min').textContent = overview.virtual_users.min;
+            document.getElementById('virtual-users-max').textContent = overview.virtual_users.max;
+
+            document.getElementById('requests-total').textContent = overview.requests.total;
+            document.getElementById('requests-rates').textContent = (overview.requests.rate / 1024).toFixed(2);
+
+            document.getElementById('data-received-total').textContent = (overview.data_received.total / (1024 * 1024)).toFixed(2) + " MB";
+            document.getElementById('data-received-rate').textContent = (overview.data_received.rate / 1024).toFixed(2);
+
+            document.getElementById('data-sent-total').textContent = (overview.data_sent.total / (1024 * 1024)).toFixed(2) + " MB";
+            document.getElementById('data-sent-rate').textContent = (overview.data_sent.rate / 1024).toFixed(2);
+
+        }
+
+        function openSection(sectionName) {
+            document.querySelectorAll(".section-content")
+                .forEach(el => el.classList.add('hidden'));
+
+            const target = document.querySelector(`.section-content.${sectionName}`);
+            if (target) target.classList.remove('hidden');
+        }
+
+        function updateTabIcon(newButton) {
+            const oldIcon = document.querySelector('.active-tab-icon');
+            if (oldIcon) {
+                oldIcon.classList.remove('active-tab-icon');
+                oldIcon.classList.add('bg-gray-100');
+
+                const oldText = oldIcon.querySelector('i');
+                if (oldText) {
+                    oldText.classList.remove("text-white");
+                    oldText.classList.add("text-gray-500");
+                }
+            }
+
+            const newIcon = newButton.querySelector('.tab-icon');
+            if (newIcon) {
+                newIcon.classList.remove('bg-gray-100');
+                newIcon.classList.add('active-tab-icon');
+
+                const newText = newIcon.querySelector('i');
+                if (newText) {
+                    newText.classList.remove("text-gray-500");
+                    newText.classList.add("text-white");
+                }
+            }
+        }
+
+        function updateTabButton(newButton) {
+            const oldTab = document.querySelector(".tab-button.active-tab");
+
+            if (oldTab) {
+                oldTab.classList.remove('active-tab');
+                oldTab.classList.add('text-gray-600', 'hover:bg-gray-50');
+            }
+
+            newButton.classList.remove('text-gray-600', 'hover:bg-gray-50');
+            newButton.classList.add('active-tab');
+        }
+
+        function activeTab(button) {
+            const section = button.dataset.section;
+            openSection(section);
+            updateTabIcon(button);
+            updateTabButton(button);
+        }
+
+        function renderScriptFile(scriptFile) {
+            const scriptFileHtml = `
+            <div class="grid grid-cols-[1fr_90px] items-center px-5 py-4 hover:bg-[#FAF9FF] transition-colors duration-150 cursor-pointer group bg-white">
+                <div class="flex items-center gap-3 min-w-0 pr-4">
+                    <p class="text-sm font-medium text-gray-800 truncate">${scriptFile.originFileName}</p>
+                </div>
+                <div class="text-center text-gray-400 font-medium">
+                    <i class="fa-solid fa-file-arrow-down"></i>
+                </div>
+            </div>
+        `;
+            document.querySelector('.file-container').insertAdjacentHTML('beforeend', scriptFileHtml);
+        }
+
+        function renderAttacheFiles(attacheFiles) {
+            const fileContainer = document.querySelector('.file-container');
+            attacheFiles.forEach(((file, index) => {
+
+                const bgClass = index % 2 != 0 ? 'bg-white' : 'group bg-[#FAFAFA]';
+                const attacheFileHtml = `
+                <div class="grid grid-cols-[1fr_90px] items-center px-5 py-4 hover:bg-[#FAF9FF] transition-colors duration-150 cursor-pointer group ${bgClass}">
+                    <div class="flex items-center gap-3 min-w-0 pr-4">
+                        <p class="text-sm font-medium text-gray-800 truncate">${file.originFileName}</p>
+                    </div>
+                    <div class="text-center text-gray-400 font-medium">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                    </div>
+                </div>
+            `;
+                fileContainer.insertAdjacentHTML('beforeend', attacheFileHtml);
+            }));
+        }
+
+        function requestRetry() {
+            const loadId = [[${loadId}]];
+            fetch(`/api/loads/${loadId}/retry`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                }
+            });
+        }
+    </script>
+</th:block>
+</body>
+</html>

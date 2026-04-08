@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: overload-worker
+  kafka:
+    bootstrap-servers: localhost:29092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: overload-worker-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        max.poll.interval.ms: 900000
+    template:
+      default-topic: load-test
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "prometheus,health,info"
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+script:
+  download-path: D:/workspace4_upload/worker/loads
+  log-path: D:/workspace4_upload/worker/logs
+  registry-url: http://localhost:8080/download
+  bundle-script: C:\IntelliJProject/overload/overload-worker/src/main/resources/static/bundle.js
+
+prometheus:
+  #endpoints: http://10.0.0.231:9090/api/v1/write
+  endpoints: http://134.185.103.9:9090/api/v1/write

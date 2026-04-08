@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}"> <head>
+    <title>Worker Monitor</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="flex gap-8">
+        <div class="flex-1">
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h1 class="text-5xl font-bold text-[#1A1D2E] mb-3">K6 Worker monitor</h1>
+                    </div>
+                    <a class="flex items-center gap-2 bg-[#6B46C1] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#5a3ba3] transition-colors whitespace-nowrap cursor-pointer"
+                       th:href="@{/loads}">
+                        <i class="ri-add-line text-xl"></i>등록
+                    </a>
+                </div>
+            </div>
+
+            <div id="load-list" class="grid grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+                    <iframe src="https://grafana.over-load.kro.kr/d-solo/ccbb2351-2ae2-462f-ae0e-f2c893ad1028/k6-prometheus?orgId=1&from=now-30s&to=now&timezone=browser&var-DS_PROMETHEUS=bfhusyqynmqrkb&var-testid=$__all&var-quantile_stat=&var-adhoc_filter=&refresh=1s&panelId=panel-10&__feature.dashboardScene=true"
+                            width="620"
+                            height="300"></iframe>
+                </div>
+                <div class="bg-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+                    <iframe src="https://grafana.over-load.kro.kr/d-solo/ccbb2351-2ae2-462f-ae0e-f2c893ad1028/k6-prometheus?orgId=1&from=now-1s&to=now&timezone=browser&var-DS_PROMETHEUS=bfhusyqynmqrkb&var-testid=$__all&var-quantile_stat=&var-adhoc_filter=&refresh=1s&panelId=panel-4&__feature.dashboardScene=true"
+                            width="620"
+                            height="300"></iframe>
+                </div>
+                <div class="bg-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+                    <iframe src="https://grafana.over-load.kro.kr/d-solo/ccbb2351-2ae2-462f-ae0e-f2c893ad1028/k6-prometheus?orgId=1&from=now-1s&to=now&timezone=browser&var-DS_PROMETHEUS=bfhusyqynmqrkb&var-testid=$__all&var-quantile_stat=&var-adhoc_filter=&refresh=1s&panelId=panel-20&__feature.dashboardScene=true"
+                            width="620"
+                            height="300"></iframe>
+                </div>
+                <div class="bg-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+                    <iframe src="https://grafana.over-load.kro.kr/d-solo/ccbb2351-2ae2-462f-ae0e-f2c893ad1028/k6-prometheus?orgId=1&from=now-1m&to=now&timezone=browser&var-DS_PROMETHEUS=bfhusyqynmqrkb&var-testid=$__all&var-quantile_stat=&var-adhoc_filter=&refresh=1s&panelId=panel-8&__feature.dashboardScene=true" width="620" height="300" frameborder="0"></iframe>
+                </div>
+                <div class="bg-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+                    <iframe src="https://grafana.over-load.kro.kr/d-solo/ccbb2351-2ae2-462f-ae0e-f2c893ad1028/k6-prometheus?orgId=1&from=now-30s&to=now&timezone=browser&var-DS_PROMETHEUS=bfhusyqynmqrkb&var-testid=$__all&var-quantile_stat=&var-adhoc_filter=&refresh=1s&panelId=panel-18&__feature.dashboardScene=true" width="620" height="300" frameborder="0"></iframe>
+                </div>
+                <div class="bg-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+                    <iframe src="https://grafana.over-load.kro.kr/d-solo/ccbb2351-2ae2-462f-ae0e-f2c893ad1028/k6-prometheus?orgId=1&from=now-1s&to=now&timezone=browser&var-DS_PROMETHEUS=bfhusyqynmqrkb&var-testid=$__all&var-quantile_stat=&var-adhoc_filter=&refresh=1s&panelId=panel-12&__feature.dashboardScene=true" width="620" height="300" frameborder="0"></iframe>
+                </div>
+                <div class="bg-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+                    <iframe src="https://grafana.over-load.kro.kr/d-solo/ccbb2351-2ae2-462f-ae0e-f2c893ad1028/k6-prometheus?orgId=1&from=now-1sto=now&timezone=browser&var-DS_PROMETHEUS=bfhusyqynmqrkb&var-testid=$__all&var-quantile_stat=&var-adhoc_filter=&refresh=1s&panelId=panel-13&__feature.dashboardScene=true" width="620" height="300" frameborder="0"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
