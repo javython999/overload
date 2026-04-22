@@ -41,6 +41,7 @@ dependencies {
     implementation 'org.apache.groovy:groovy:4.0.21'
     compileOnly 'org.springframework.boot:spring-boot-devtools'
 
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-kafka-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
