@@ -11,8 +11,6 @@ public record LoadRegisterRequest(
 ) {
 
     public boolean hasAttacheFiles() {
-        return attacheFiles.stream()
-                .map(f -> !f.isEmpty())
-                .reduce(true, (a, b) -> a && b);
+        return attacheFiles != null && attacheFiles.stream().anyMatch(f -> !f.isEmpty());
     }
 }
