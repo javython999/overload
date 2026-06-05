@@ -550,7 +550,6 @@
         document.addEventListener("DOMContentLoaded", async () => {
             const load = await fetchLoad([[${loadId}]]);
             render(load);
-            console.log(load);
         });
 
         function render(load) {
@@ -558,7 +557,6 @@
             document.getElementById('load-status').innerText = load.statusText;
             document.getElementById('load-status').classList.add(...load.statusClassName.split(' '));
             document.getElementById('script-content').innerText = load.scriptContent;
-            console.log(load);
             if (load.statusText === '완료') {
                 renderTrends(load.summary.trends);
                 renderRates(load.summary.rates);
